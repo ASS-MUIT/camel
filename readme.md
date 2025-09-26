@@ -52,7 +52,7 @@ mvn spring-boot:run
 Copy any of the files located in the resources/data folder into the folder target/work/fhir/input.
 You should see and output similar to this:
 <div style="text-align: center;">
-<img src="./resources/output.png" width="500" />
+<img src="./resources/output.png" width="1000" />
 </div>
 
 The Camel application can be stopped pressing `Ctrl+c` in the shell.
