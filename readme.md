@@ -7,8 +7,8 @@
 ## Introduction
 
 This is the base code for the 3th activity in HSA, within the MUIT (Master Degree in Telecomunication Engineering) of the University of Seville.
-It`s an example application of the definition of camel routes and their execution as an spring boot application.
-In this case the `camel-fhir` component is used. We'll be using `camel-spring-boot` as well for an easy setup.
+It is an example application of the definition of camel routes and their execution as an spring boot application.
+In this case the `camel-fhir` component is used. We will be using `camel-spring-boot` as well for an easy setup.
 We are going to analize both techniques for route specification:
 
 	- As a Java DSL: The Camel route is located in the `MyCamelRouter` class.
