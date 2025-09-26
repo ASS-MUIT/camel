@@ -3,6 +3,7 @@
 <div style="text-align: center;">
 <img src="./resources/logos.png" width="200" />
 </div>
+
 ## Introduction
 
 This is the base code for the 3th activity in HSA, within the MUIT (Master Degree in Telecomunication Engineering) of the University of Seville.
