@@ -12,7 +12,7 @@ In this case the `camel-fhir` component is used. We will be using `camel-spring-
 We are going to analize both techniques for route specification:
 
 	- As a Java DSL: The Camel route is located in the `MyCamelRouter` class.
-	- As a YAML file: The same rout is located in `resource` folder.
+	- As a YAML file: The same route is located in the `resource` folder.
 
 This example will read **HL7V2** files with patients data from a directory, convert them to **FHIR R4** patients and finnaly upload them to a configured FHIR server.
 
