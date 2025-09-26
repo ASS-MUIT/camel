@@ -1,0 +1,26 @@
+- route:
+    id: fhir-example
+    
+    from:
+      uri: file:{{input}}
+    
+      steps:
+      - log:
+          message: "Converting ${file:name}"
+      - unmarshal:
+          hl7: {}
+      - process:
+          ref: hl7ToFhirProcessor
+      - marshal:
+          fhirJson:
+            fhirVersion: "R4"
+      - convertBodyTo:
+          type: java.lang.String
+      - log:
+          message: "Inserting Patient: ${body}"
+      - to:
+          uri: "fhir://create/resource?inBody=resourceAsString&serverUrl={{serverUrl}}&fhirVersion={{fhirVersion}}"
+      - process:
+          ref: outcomeProcessor
+      - log:
+          message: "Fhir Server ${body}"
