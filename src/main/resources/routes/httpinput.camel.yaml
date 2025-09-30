@@ -1,0 +1,25 @@
+
+- route:
+    id: fhir-example-http
+    from:
+      uri: undertow:http://0.0.0.0:8080/hl7receiver?httpMethodRestrict=PUT
+      steps:
+      - log:
+          message: "Converting ${file:name}"
+      - unmarshal:
+          hl7: {}
+      - process:
+          ref: hl7ToFhirProcessor
+      - marshal:
+          fhirJson:
+            fhirVersion: "R4"
+      - convertBodyTo:
+          type: java.lang.String
+      - log:
+          message: "Inserting Patient: ${body}"
+      - to:
+          uri: "fhir://create/resource?inBody=resourceAsString&serverUrl={{serverUrl}}&fhirVersion={{fhirVersion}}"
+      - process:
+          ref: outcomeProcessor
+      - log:
+          message: "Fhir Server ${body}"
