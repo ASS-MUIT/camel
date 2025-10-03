@@ -9,7 +9,7 @@
 This is the base code for the 3th activity in HSA, within the MUIT (Master Degree in Telecomunication Engineering) of the University of Seville.
 It is an example application of the definition of camel routes and their execution as an spring boot application.
 In this case the `camel-fhir` component is used. We will be using `camel-spring-boot` as well for an easy setup.
-We are going to analize both techniques for route specification:
+We are going to analyze both techniques for route specification:
 
 	- As a Java DSL: The Camel route is located in the `MyCamelRouter` class.
 	- As a YAML file: The same route is located in the `resource` folder.
@@ -39,7 +39,7 @@ mvn package
 
 ## Run
 
-In default mode the application uses an online test server to send Patient info, so you don´t need to run a FHIR server, just use:
+In default mode the application uses an online test server to send Patient info, so you don't need to run a FHIR server, just use:
 
 ```bash
 mvn spring-boot:run
