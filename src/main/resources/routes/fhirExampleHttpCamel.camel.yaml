@@ -1,9 +1,14 @@
+- rest:
+    path: /hl7receiver
+    consumes: text/plain
+    produces: application/json
+    put:
+    - to: direct:hl7
+
 - route:
-    id: fhir-example
-    
+    id: fhir-example-http-camel
     from:
-      uri: file:{{input}}
-    
+      uri: direct:hl7
       steps:
       - log:
           message: "Converting ${file:name}"

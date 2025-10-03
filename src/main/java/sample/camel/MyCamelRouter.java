@@ -24,7 +24,6 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.http.ProtocolException;
 import org.hl7.fhir.r4.model.Patient;
-import org.springframework.stereotype.Component;
 
 /**
  * A simple Camel route that triggers from a file and posts to a FHIR server.

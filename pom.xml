@@ -192,6 +192,10 @@ hand-on activities in HSA for the MUIT in the US-->
     <artifactId>commons-io</artifactId>
     <version>2.13.0</version>
 </dependency>
+<dependency>
+    <groupId>org.apache.camel.springboot</groupId>
+    <artifactId>camel-undertow-starter</artifactId>
+</dependency>
         <!-- HAPI FHIR -->
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
@@ -205,6 +209,37 @@ hand-on activities in HSA for the MUIT in the US-->
 </dependency>
 
         <!-- Test Dependencies -->
+        
+<dependency>
+    <groupId>org.apache.camel.springboot</groupId>
+    <artifactId>camel-spring-boot-starter</artifactId>
+    <version>4.0.0</version>
+</dependency>
+
+<dependency>
+    <groupId>org.apache.camel.springboot</groupId>
+    <artifactId>camel-hl7-starter</artifactId>
+    <version>4.0.0</version>
+</dependency>
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-test</artifactId>
+    <version>3.1.0</version>
+    <scope>test</scope>
+</dependency>
+
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-test-spring-junit5</artifactId>
+    <version>4.0.0</version>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-yaml-dsl</artifactId>
+    <version>4.0.0</version>
+</dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
