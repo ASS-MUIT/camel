@@ -6,13 +6,13 @@
 
 ## Introduction
 
-This is the base code for the 3th activity in HSA, within the MUIT (Master Degree in Telecomunication Engineering) of the University of Seville.
+This is the base code for the 3th activity in HSA, within the MUIT (Master Degree in Telecomunication Engineering) of the University of Seville. It's a modified version of the module `fhir` from [https://github.com/apache/camel-spring-boot-examples](https://github.com/apache/camel-spring-boot-examples), where you could find extra examples of interest to learn camel.
 It is an example application of the definition of camel routes and their execution as an spring boot application.
 In this case the `camel-fhir` component is used. We will be using `camel-spring-boot` as well for an easy setup.
 We are going to analyze both techniques for route specification:
 
 	- As a Java DSL: The Camel route is located in the `MyCamelRouter` class.
-	- As a YAML file: The same route is located in the `resource` folder.
+	- As a YAML file: The same route and others, located in the `resource` folder.
 
 This example will read **HL7V2** files with patients data from a directory, convert them to **FHIR R4** patients and finnaly upload them to a configured FHIR server.
 
