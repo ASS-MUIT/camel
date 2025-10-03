@@ -21,7 +21,7 @@ graph TD
     B --> F[YAML DSL Implementation]
     C --> F
     D --> F
-    E --> G[Java DSL Implementation]
+    B --> G[Java DSL Implementation]
     
     F --> H[FHIR Transformation Engine]
     G --> H
