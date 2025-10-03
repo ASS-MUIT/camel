@@ -22,9 +22,11 @@ By default, the example uses the URL of this external server and **R4** as the F
 However, you can edit the `application.properties` file to override the defaults and provide your own configuration.
 You can deploy a local fhir server in `http://localhost:8081/fhir` following the instructions in run section.
 
+After this, we are going to change the input mode, in order to trigger the flow when an HTTP PUT request is received, we are going to analize different alternatives for this.
+
 ## Prerequisites & Dependencies
 
-To build and run this example, you need **Java** and **Docker** installed. This project uses **Maven** for dependency management.
+To build and run this example, you need **Java** installed. This project uses **Maven** for dependency management.
 
 The core dependencies for this project are listed in the `pom.xml` file
 ## Build
@@ -37,17 +39,18 @@ mvn package
 
 ## Run
 
+In default mode the application uses an online test server to send Patient info, so you don´t need to run a FHIR server, just use:
+
+```bash
+mvn spring-boot:run
+```
+But if you want to run your own fhir server you will need **Docker** installed.
 Before running your application you could execute this command to deploy FHIR server:
 
 ```bash
 docker run -p 8081:8080 -e hapi.fhir.fhir_version=R4 -e hapi.fhir.reuse_cached_search_results_millis=-1 hapiproject/hapi:v6.8.3
 ```
-
-But in default mode the application uses an online test server, so you don´t need to execute this command. Then you can run this example using:
-
-```bash
-mvn spring-boot:run
-```
+## Test
 
 Copy any of the files located in the resources/data folder into the folder target/work/fhir/input.
 You should see and output similar to this:
@@ -63,4 +66,6 @@ To show a summary of spring boot health check
 ```bash
 curl -XGET -s http://localhost:8080/actuator/health
 ```
+## Extended information
 
+You can have extended information about the provided code in [architecture.md](/architecture.md)

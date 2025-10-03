@@ -1,8 +1,9 @@
-
 - route:
-    id: fhir-example-http-undertow
+    id: fhir-example
+    
     from:
-      uri: undertow:http://0.0.0.0:8081/hl7receiver?httpMethodRestrict=PUT
+      uri: file:{{input}}
+    
       steps:
       - log:
           message: "Converting ${file:name}"
