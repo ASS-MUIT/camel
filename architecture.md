@@ -37,7 +37,7 @@ graph TD
 - **Trigger**: A new file in a folder, Automatic pickup of files from a disk location
 - **Output**: Processed files sent to FHIR server
 - **Advantages**: No network dependencies in the input, suitable for a first test. Full programmatic control, debugging capabilities
-- **Limitations**: Requires Java knowledge, less declarative. File-based input doesn´t fit with SOA context
+- **Limitations**: Requires Java knowledge, less declarative. File-based input doesn't fit with SOA context
 
 #### 2. File input, Declarative Route (YAML DSL)
 - **Configuration**: Defined in `fileinput.camel.yaml`. This is the same Route than the previous one but defined with yaml instead of java
@@ -45,7 +45,7 @@ graph TD
 - **Trigger**: A new file in a folder, Automatic pickup of files from a disk location
 - **Output**: Processed files sent to FHIR server
 - **Advantages**: No network dependencies in the input, suitable for a first test
-- **Limitations**: File-based input doesn´t fit with SOA context
+- **Limitations**: File-based input doesn't fit with SOA context
 
 #### 3. Embedded REST API (YAML DSL)  
 - **Configuration**: Defined in `fhirExampleHttpCamel.camel.yaml`
