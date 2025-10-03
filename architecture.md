@@ -118,37 +118,6 @@ graph TD
             └── 📄 httpinput.camel.yaml   # HTTP input routes (embedded & standalone)
 ```
 
-## Route Implementation Comparison
-
-```mermaid
-graph TB
-    subgraph "Java DSL Implementation"
-        A1[MyCamelRoute.java] --> A2[RouteBuilder Class]
-        A2 --> A3[from().to() Methods]
-        A3 --> A4[File Input Processing]
-    end
-    
-    subgraph "YAML DSL Implementation"
-        B1[fhirExample.camel.yaml] --> B2[Declarative Route Config]
-        B2 --> B3[from/to YAML Structure]
-        B3 --> B4[File Input Processing]
-    end
-    
-    subgraph "Additional YAML Routes"
-        C1[fileinput.camel.yaml] --> C2[File-based Processing]
-        C3[httpinput.camel.yaml] --> C4[HTTP Endpoints]
-        C4 --> C5[Port 8080 - Embedded]
-        C4 --> C6[Port 8081 - Standalone]
-    end
-    
-    A4 --> D[HL7 to FHIR Transformation]
-    B4 --> D
-    C2 --> D
-    C5 --> D
-    C6 --> D
-    
-    D --> E[HAPI FHIR Server Output]
-```
 
 ## Architecture Components Overview
 
