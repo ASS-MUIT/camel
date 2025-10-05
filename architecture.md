@@ -20,9 +20,10 @@ graph TD
     A --> D[HTTP REST - Standalone]
     
     B --> F[YAML DSL Implementation]
+    C --> G[Java DSL Implementation]
     C --> F
     D --> F
-    B --> G[Java DSL Implementation]
+    B --> G
     
     F --> H[FHIR Transformation Engine]
     G --> H
@@ -89,7 +90,7 @@ graph TD
     
     H --> J["📁 sample/camel/ <br/> <em>Main package</em>"]
     J --> K["📄 MyCamelApplication.java <br/> <em>Spring Boot main class</em>"]
-    J --> L["� routes/ <br/> <em>Java DSL route definitions</em>"]
+    J --> L["📁 routes/ <br/> <em>Java DSL route definitions</em>"]
     J --> P["📁 processors/ <br/> <em>Custom message processors</em>"]
     L --> Q1["📄 FromRegisterFile2FHIRRoute.java"]
     L --> Q2["📄 FromRegisterPut2FHIRRoute.java"]
@@ -102,9 +103,9 @@ graph TD
     I --> M["📁 routes/ <br/> <em>YAML route definitions</em>"]
     I --> N["📄 application.properties <br/> <em>Main configuration</em>"]
     
-    M --> Q["📄 fhirExample.camel.yaml <br/> <em>YAML equivalent of MyCamelRoute</em>"]
-    M --> R["📄 fileinput.camel.yaml <br/> <em>File-based input route</em>"]
-    M --> S["📄 httpinput.camel.yaml <br/> <em>HTTP input routes (embedded & standalone)</em>"]
+    M --> Q["📄 fileinput.camel.yaml <br/> <em>YAML equivalent to FromObservationFile2FHIRRoute.java</em>"]
+    M --> R["📄 fhirExampleHttpCamel.camel <br/> <em>Http input route, with embedded server</em>"]
+    M --> S["📄 httpinput.camel.yaml <br/> <em>HTTP input route, with standalone server</em>"]
 ```
 
 ## Detailed Directory Structure
@@ -125,20 +126,20 @@ graph TD
     │   └── 📁 sample/camel/               # Main application package
     │       ├── 📄 MyCamelApplication.java # Spring Boot entry point
     │       ├── 📁 routes/                 # Java DSL route definitions
-    │       │   ├── 📄 FromRegisterFile2FHIRRoute.java    # Patient registration (file)
-    │       │   ├── 📄 FromRegisterPut2FHIRRoute.java     # Patient registration (HTTP)
-    │       │   └── 📄 FromObservationFile2FHIRRoute.java # Observation processing (file)
+    │       │   ├── 📄 FromRegisterFile2FHIRRoute.java    # Routes HL7 ADT_A04 messages from disk (Patient Register)
+    │       │   ├── 📄 FromRegisterPut2FHIRRoute.java     # Routes HL7 ADT_A04 messages from http put requests (Patient Register)
+    │       │   └── 📄 FromObservationFile2FHIRRoute.java # Routes HL7 ORU_R01 messages from disk (Observation/Result)
     │       └── 📁 processors/             # Custom message processors
-    │           ├── 📄 Hl7Register2FhirPatientProcessor.java  # ADT to Patient converter
-    │           ├── 📄 Hl7ToFhirProcessor.java               # General HL7 to FHIR processor
-    │           ├── 📄 VerifyHl7Type.java                    # HL7 message type validator
+    │           ├── 📄 Hl7Register2FhirPatientProcessor.java  # HL7 ADT_A04 message to FHIR Patient converter
+    │           ├── 📄 Hl7ToFhirProcessor.java               # HL7 ORU_R01 message to FHIR Patient converter
+    │           ├── 📄 VerifyHl7Type.java                    # Extract Message type and update Exchange headers with this information
     │           └── 📄 OutcomeProcessor.java                 # FHIR outcome handler
     └── 📁 resources/                      # Configuration and resource files
         ├── 📄 application.properties      # Main application configuration
         └── 📁 routes/                     # YAML route definitions
-            ├── 📄 fhirExample.camel.yaml # YAML equivalent of MyCamelRoute
-            ├── 📄 fileinput.camel.yaml   # File-based input route (YAML)
-            └── 📄 httpinput.camel.yaml   # HTTP input routes (embedded & standalone)
+            ├── 📄 fhirExampleHttpCamel.camel.yaml #  HTTP input route with embedded server
+            ├── 📄 fileinput.camel.yaml   # YAML equivalent to FromObservationFile2FHIRRoute.java
+            └── 📄 httpinput.camel.yaml   # HTTP input route with standalone server
 ```
 
 
@@ -151,10 +152,10 @@ graph TD
     end
     
     subgraph "Route Definitions"
-        C[Java DSL Routes<br/>MyCamelRoute.java] 
-        D[YAML DSL Routes<br/>fhirExample.camel.yaml]
-        E[File Input Routes<br/>fileinput.camel.yaml]
-        F[HTTP Input Routes<br/>httpinput.camel.yaml]
+        C[Java DSL Routes with disk Input<br/>FromObservationFile2FHIRRoute.java and FromRegisterFile2FHIRRoute] 
+        D[Java DSL Route with http Input<br/>FromRegisterPut2FHIRRoute]
+        E[YAML DSL Route with disk Input<br/>fileinput.camel.yaml]
+        F[YAML DSL Routes with http Input<br/>fhirExampleHttpCamel.camel.yaml and httpinput.camel.yaml]
     end
     
     subgraph "Input Sources"
