@@ -16,12 +16,7 @@
  */
 package sample.camel.routes;
 
-import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.model.v24.message.ADT_A01;
-import ca.uhn.hl7v2.model.v24.message.ADT_A03;
-import ca.uhn.hl7v2.model.v24.message.ORU_R01;
-import ca.uhn.hl7v2.model.v24.segment.PID;
 import sample.camel.processors.Hl7Register2FhirPatientProcessor;
 import sample.camel.processors.OutcomeProcessor;
 import sample.camel.processors.VerifyHl7Type;
@@ -30,7 +25,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.http.ProtocolException;
-import org.hl7.fhir.r4.model.Patient;
 import org.springframework.stereotype.Component;
 
 /**

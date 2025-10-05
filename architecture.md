@@ -2,13 +2,14 @@
 
 ## Available Routes Overview
 
-This solution provides multiple integration routes for HL7v2 to FHIR R4 transformation, each designed for different use cases and deployment scenarios:
+This solution provides multiple specialized integration routes for HL7v2 to FHIR R4 transformation, each designed for specific message types and deployment scenarios:
 
-| Route Name | Implementation | HL7 Reception Method | Endpoint/Location | Port | Description | Use Case |
-|------------|----------------|---------------------|-------------------|------|-------------|----------|
-| **File-based Route** | YAM and JAVA DSL | File system polling | File system monitoring | N/A | Monitors directory for HL7 files and processes them automatically | Batch processing, legacy system integration |
-| **Embedded REST API** | YAML DSL | HTTP PUT endpoint | `http://0.0.0.0:8080/healthcare/hl7receiver` | 8080 (Default Camel) | Uses Camel's built-in platform-http component | Lightweight REST integration |
-| **Standalone REST API** | YAML DSL | HTTP PUT endpoint | `http://0.0.0.0:8081/hl7receiver` | 8081 (Undertow) | Dedicated Undertow server for REST API | Production-ready HTTP services |
+| Route Name | Implementation | HL7 Message Type | Reception Method | Endpoint/Location | Description | Use Case |
+|------------|----------------|------------------|------------------|-------------------|-------------|----------|
+| **FromObservationFile2FHIRRoute** | Java DSL | ORU_R01 | File system polling | `target/work/fhir/input` | Processes observation messages from files | Laboratory results batch processing |
+| **FromRegisterFile2FHIRRoute** | Java DSL | ADT_A04 | File system polling | `target/work/fhir/input` | Processes patient registration messages from files | Patient register processing |
+| **FromRegisterPut2FHIRRoute** | Java DSL | ADT_A04 | HTTP PUT endpoint | `http://localhost:8080/healthcare/hl7receiver` | Real-time patient registration via HTTP | Patient register processing |
+| **YAML Routes** | YAML DSL | Various | File/HTTP | Multiple endpoints | Declarative route definitions | Configuration-driven integration |
 
 ### Route Comparison Matrix
 
@@ -31,41 +32,47 @@ graph TD
 
 ### Implementation Details by Route Type
 
-#### 1. File input, Programmatic Route (Java DSL)
-- **Configuration**: Defined in Java `MyCamelRouter`class
-- **RouteId**: `fhir-example`
-- **Trigger**: A new file in a folder, Automatic pickup of files from a disk location
-- **Output**: Processed files sent to FHIR server
-- **Advantages**: No network dependencies in the input, suitable for a first test. Full programmatic control, debugging capabilities
-- **Limitations**: Requires Java knowledge, less declarative. File-based input doesn't fit with SOA context
+#### 1. Observation Processing Route (Java DSL)
 
-#### 2. File input, Declarative Route (YAML DSL)
-- **Configuration**: Defined in `fileinput.camel.yaml`. This is the same Route than the previous one but defined with yaml instead of java
-- **RouteId**: `fhir-example`
-- **Trigger**: A new file in a folder, Automatic pickup of files from a disk location
-- **Output**: Processed files sent to FHIR server
-- **Advantages**: No network dependencies in the input, suitable for a first test
-- **Limitations**: File-based input doesn't fit with SOA context
+**FromObservationFile2FHIRRoute**
+- **Configuration**: Defined in Java class with @Component annotation, slightly modification of the base sample
+- **RouteId**: `fromObservationFile2FHIR`
+- **Message Types**: HL7 ORU_R01 (Observation Result)
+- **Trigger**: File system polling of `target/work/fhir/input` directory
+- **Processing**: Extracts patient from observation HL7 messages
+- **Output**: FHIR Patient resource send to an external FHIR server
+- **Advantages**: Only a sample with observation processing
+- **Use Case**: Far from an actual use case
 
-#### 3. Embedded REST API (YAML DSL)  
-- **Configuration**: Defined in `fhirExampleHttpCamel.camel.yaml`
-- **RouteId**: `fhir-example-http-camel`
-- **Trigger**: Reception of an HTTP PUT request in an endpoint
-- **Endpoint**: `PUT http://localhost:8080/healthcare/hl7receiver`
-- **Processing**: Synchronous HTTP request/response
-- **Output**: Processed files sent to FHIR server
-- **Advantages**: Simple setup, integrated with Spring Boot. Fits better with a SOA context
-- **Limitations**: Shares port with main application
+#### 2. Patient Registration Routes (Java DSL)
 
-#### 4. Standalone REST API (YAML DSL) 
-- **Configuration**: Defined in `httpinput.camel.yaml`
-- **RouteId**: `fhir-example-http-undertow`
-- **Trigger**: Reception of an HTTP PUT request in an endpoint
-- **Endpoint**: `PUT http://localhost:8081/hl7receiver`
-- **Processing**: Synchronous HTTP request/response
-- **Output**: Processed files sent to FHIR server
-- **Advantages**:  Dedicated port, better performance isolation. Fits better with a SOA context
-- **Limitations**: Additional server overhead
+**FromRegisterFile2FHIRRoute**
+- **Configuration**: Defined in Java class with @Component annotation
+- **RouteId**: `fromRegisterFile2FHIR`
+- **Message Types**: HL7 ADT_A04 (Register new Patient)
+- **Trigger**: File system polling of `target/work/fhir/input` directory
+- **Processing**: Uses `VerifyHl7Type` and `Hl7Register2FhirPatientProcessor`
+- **Output**: A new FHIR Patient resources sent to configured FHIR server
+- **Advantages**: Reliable file-based processing, automatic message type detection
+- **Use Case**: Batch processing of patient register data
+
+**FromRegisterPut2FHIRRoute**
+- **Configuration**: Defined in Java class with @Component annotation
+- **RouteId**: `fromRegisterPut2FHIR`
+- **Message Types**: HL7 ADT_A04
+- **Trigger**: HTTP PUT requests to `/healthcare/hl7receiver`
+- **Processing**: Real-time HL7 message validation and transformation
+- **Output**: FHIR Patient resources with HTTP response
+- **Advantages**: Real-time processing, REST API integration
+- **Use Case**: Real-time patient registration systems
+  
+#### 3. YAML DSL Routes (Declarative Configuration)
+
+**Multiple YAML Route Definitions**
+- **Configuration**: Defined in `*.camel.yaml` files under `src/main/resources/routes/`
+- **Advantages**: Declarative, configuration-driven, no Java compilation required
+- **Files**: `fileinput.camel.yaml`, `fhirExampleHttpCamel.camel.yaml`, `httpinput.camel.yaml`
+- **Use Case**: Configuration-based integration, rapid prototyping
 
 ## Project Structure Diagram
 
@@ -82,7 +89,15 @@ graph TD
     
     H --> J["📁 sample/camel/ <br/> <em>Main package</em>"]
     J --> K["📄 MyCamelApplication.java <br/> <em>Spring Boot main class</em>"]
-    J --> L["📄 MyCamelRoute.java <br/> <em>Java DSL route definition</em>"]
+    J --> L["� routes/ <br/> <em>Java DSL route definitions</em>"]
+    J --> P["📁 processors/ <br/> <em>Custom message processors</em>"]
+    L --> Q1["📄 FromRegisterFile2FHIRRoute.java"]
+    L --> Q2["📄 FromRegisterPut2FHIRRoute.java"]
+    L --> Q3["📄 FromObservationFile2FHIRRoute.java"]
+    P --> P1["📄 Hl7Register2FhirPatientProcessor.java"]
+    P --> P2["📄 Hl7ToFhirProcessor.java"]
+    P --> P3["📄 VerifyHl7Type.java"]
+    P --> P4["📄 OutcomeProcessor.java"]
     
     I --> M["📁 routes/ <br/> <em>YAML route definitions</em>"]
     I --> N["📄 application.properties <br/> <em>Main configuration</em>"]
@@ -109,7 +124,15 @@ graph TD
     ├── 📁 java/                           # Java source files
     │   └── 📁 sample/camel/               # Main application package
     │       ├── 📄 MyCamelApplication.java # Spring Boot entry point
-    │       └── 📄 MyCamelRoute.java       # Java DSL route (file input processing)
+    │       ├── 📁 routes/                 # Java DSL route definitions
+    │       │   ├── 📄 FromRegisterFile2FHIRRoute.java    # Patient registration (file)
+    │       │   ├── 📄 FromRegisterPut2FHIRRoute.java     # Patient registration (HTTP)
+    │       │   └── 📄 FromObservationFile2FHIRRoute.java # Observation processing (file)
+    │       └── 📁 processors/             # Custom message processors
+    │           ├── 📄 Hl7Register2FhirPatientProcessor.java  # ADT to Patient converter
+    │           ├── 📄 Hl7ToFhirProcessor.java               # General HL7 to FHIR processor
+    │           ├── 📄 VerifyHl7Type.java                    # HL7 message type validator
+    │           └── 📄 OutcomeProcessor.java                 # FHIR outcome handler
     └── 📁 resources/                      # Configuration and resource files
         ├── 📄 application.properties      # Main application configuration
         └── 📁 routes/                     # YAML route definitions
@@ -165,18 +188,34 @@ graph TD
 ## File Content Summary
 
 ### Java Implementation Files
+
+**Core Application**
 - **`MyCamelApplication.java`**: Spring Boot main class with `@SpringBootApplication` annotation
-- **`MyCamelRoute.java`**: Java DSL route using `RouteBuilder` for file-based HL7 processing
+
+**Route Definitions** (in `routes/` package)
+- **`FromRegisterFile2FHIRRoute.java`**: Processes HL7 ADT messages from files to create FHIR Patient resources
+- **`FromRegisterPut2FHIRRoute.java`**: Handles HL7 ADT messages via HTTP PUT requests
+- **`FromObservationFile2FHIRRoute.java`**: Processes HL7 ORU observation messages from files
+
+**Custom Processors** (in `processors/` package)
+- **`Hl7Register2FhirPatientProcessor.java`**: Converts HL7 ADT messages to FHIR Patient resources
+- **`Hl7ToFhirProcessor.java`**: General-purpose HL7 to FHIR transformation processor
+- **`VerifyHl7Type.java`**: Validates and identifies HL7 message types, update Exchange headers 
+- **`OutcomeProcessor.java`**: Handles FHIR operation outcomes and responses
 
 ### YAML Route Files
-- **`fhirExample.camel.yaml`**: YAML equivalent of `MyCamelRoute.java` - demonstrates same functionality in declarative format
+- **`fhirExampleHttpCamel.camel.yaml`**: HTTP endpoint route for embedded Camel REST API
 - **`fileinput.camel.yaml`**: File system polling route for batch HL7 processing
-- **`httpinput.camel.yaml`**: HTTP endpoint routes for real-time HL7 message processing
+- **`httpinput.camel.yaml`**: Standalone HTTP endpoint routes with dedicated server
 
 ### Configuration Files
 - **`application.properties`**: Main configuration including FHIR server URL, Camel route patterns, and REST settings
 
-This structure provides both programmatic (Java DSL) and declarative (YAML DSL) approaches to route definition, allowing for different development preferences and use cases while maintaining the same core HL7-to-FHIR transformation functionality.
+### Sample Data Files (in `resources/data/`)
+- **`sample.admision`**: Sample HL7 ADT_A04 registration message
+- **`sample.observation`**: Sample HL7 ORU observation message
+
+This structure provides a comprehensive healthcare integration solution with specialized processors for different HL7 message types, multiple input methods (file and HTTP), and both programmatic (Java DSL) and declarative (YAML DSL) route definitions.
 
 ## Overview
 
@@ -185,9 +224,9 @@ This solution implements a healthcare data integration system that transforms HL
 ## Technology Stack
 
 ### Core Technologies
-- **Java**: Programming language (Java 11+)
-- **Spring Boot**: Application framework for microservices
-- **Apache Camel**: Enterprise Integration Pattern framework
+- **Java 17**: Programming language with modern features
+- **Spring Boot 3.3**: Application framework for microservices
+- **Apache Camel 4.8.9**: Enterprise Integration Pattern framework
 - **Maven**: Build automation and dependency management
 
 ### Integration Technologies
@@ -236,5 +275,5 @@ This solution implements a healthcare data integration system that transforms HL
 - **YAML Routes**: Declarative route definitions
 - **Property-driven**: External configuration via properties files
 
-This architecture provides a robust, scalable, and maintainable solution for healthcare data integration using industry-standard technologies and patterns.
+This architecture provides a sample solution for healthcare data integration using industry-standard technologies and patterns.
 
