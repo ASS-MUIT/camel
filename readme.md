@@ -2,7 +2,7 @@
 <img src="./resources/logos.png" width="200" />
 </div>
 
-# 3rd Activity: Transforming HL7V2/CDA data to FHIR R4 with Apache Camel and Spring Boot
+# 3rd Activity: Transforming HL7V2 data to FHIR R4 with Apache Camel and Spring Boot
 
 ## Introduction
 
