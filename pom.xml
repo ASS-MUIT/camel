@@ -26,7 +26,7 @@
 
     <groupId>sample.camel</groupId>
     <artifactId>camel-spring-boot-fhir</artifactId>
-    <version>1.0.0</version>
+    <version>0.0.25</version>
     <packaging>jar</packaging>
 
     <name>Camel Spring Boot FHIR</name>
