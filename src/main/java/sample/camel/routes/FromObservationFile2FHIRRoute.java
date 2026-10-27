@@ -16,15 +16,16 @@
  */
 package sample.camel.routes;
 
-import ca.uhn.fhir.rest.api.MethodOutcome;
-import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.model.v24.message.ORU_R01;
-import ca.uhn.hl7v2.model.v24.segment.PID;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.http.ProtocolException;
 import org.hl7.fhir.r4.model.Patient;
 import org.springframework.stereotype.Component;
+
+import ca.uhn.fhir.rest.api.MethodOutcome;
+import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.model.v24.message.ORU_R01;
+import ca.uhn.hl7v2.model.v24.segment.PID;
 
 /**
  * A simple Camel route that triggers from a file and posts to a FHIR server.
@@ -114,9 +115,16 @@ public class FromObservationFile2FHIRRoute extends RouteBuilder {
                     patient.addName().addGiven(name);
                     patient.getNameFirstRep().setFamily(surname);
                     patient.setId(patientId);
+                    // The HL7 patient id (PID-3) is a business identifier of the patient,
+                    // it is stored in identifier, while id is the technical key of the resource in the server
+                    patient.addIdentifier().setValue(patientId);
                     // Set the patient in the exchange. replace the HL7 message with the FHIR
                     // Patient resource
                     exchange.getIn().setBody(patient);
+                    // The update (PUT) operation needs the id of the resource to update.
+                    // Headers named CamelFhir.<parameter> are used by the FHIR component
+                    // as parameters of the invoked method, here the stringId of update/resource
+                    exchange.getIn().setHeader("CamelFhir.stringId", "Patient/" + patientId);
                 })
                 // Step 4: Marshal the Patient resource to a JSON string
                 // and send it to the FHIR server using the FHIR component.
@@ -131,8 +139,8 @@ public class FromObservationFile2FHIRRoute extends RouteBuilder {
                 // log the patient in order to see the output
                 .convertBodyTo(String.class)
                 .log("Inserting Patient: ${body}")
-                // create Patient in our FHIR server
-                .to("fhir://create/resource?inBody=resourceAsString&serverUrl={{serverUrl}}&fhirVersion={{fhirVersion}}")
+                // create or update Patient in our FHIR server (PUT [base]/Patient/[id])
+                .to("fhir://update/resource?inBody=resourceAsString&serverUrl={{serverUrl}}&fhirVersion={{fhirVersion}}")
                 // Step 5: Process the MethodOutcome object to safely access the response data.
                 // The MethodOutcome object contains information about the result of the
                 // create operation, including the ID of the created resource.
@@ -146,7 +154,8 @@ public class FromObservationFile2FHIRRoute extends RouteBuilder {
                     if (outcome != null && outcome.getId() != null) {
                         // Access the ID of the created resource.
                         String createdId = outcome.getId().getIdPart();
-                        exchange.getIn().setBody("Created Patient with ID: " + createdId + " In the FHIR server.");
+                        // getCreated() is null (not false) when the server updates an existing resource
+                        exchange.getIn().setBody(Boolean.TRUE.equals(outcome.getCreated()) ? "Created" + " Patient with ID: " + createdId + " In the FHIR server.": "Updated" + " Patient with ID: " + createdId + " In the FHIR server.");
                     } else {
                         exchange.getIn()
                                 .setBody("Patient created successfully, but the server response was incomplete.");

@@ -16,16 +16,15 @@
  */
 package sample.camel.routes;
 
-import ca.uhn.hl7v2.HL7Exception;
-import sample.camel.processors.Hl7Register2FhirPatientProcessor;
-import sample.camel.processors.OutcomeProcessor;
-import sample.camel.processors.VerifyHl7Type;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.http.ProtocolException;
-import org.springframework.stereotype.Component;
+
+import ca.uhn.hl7v2.HL7Exception;
+import sample.camel.processors.Hl7Register2FhirPatientProcessor;
+import sample.camel.processors.OutcomeProcessor;
+import sample.camel.processors.VerifyHl7Type;
 
 /**
  * A simple Camel route that triggers from a file and posts to a FHIR server.
@@ -36,7 +35,7 @@ import org.springframework.stereotype.Component;
  * src/main/resources/routes/mycamelrouter.camel.yaml
  * <p/>
  */
-@Component
+//@Component
 // Define the Camel route, by extending RouteBuilder
 public class FromRegisterPut2FHIRRoute extends RouteBuilder {
 
